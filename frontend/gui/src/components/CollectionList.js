@@ -18,19 +18,11 @@ export class CollectionList extends Component {
             }));
     }
 
-    // onChange = (page) => {
-    //     console.log(page);
-    // }
-
     render() {
         return (
             <div>
                 <List
                     itemLayout="horizontal"
-                    // pagination={{
-                    //     onChange: this.onChange,
-                    //     pageSize: 3,
-                    // }}
                     pagination={{
                         pageSize: 3,
                     }}
@@ -39,7 +31,7 @@ export class CollectionList extends Component {
                         <List.Item>
                             <List.Item.Meta
                                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                title={<a href="https://ant.design">{item.name}</a>}
+                                title={<a href={`/${item.id}`}>{item.name}</a>}
                                 description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
                         </List.Item>
                     )} />

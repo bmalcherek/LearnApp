@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
 import Layout from './containers/Layout';
+import BaseRouter from './routes';
 
 
 class App extends Component {
@@ -10,7 +12,11 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <Layout />
+                <Router>
+                    <Layout>
+                        <BaseRouter />
+                    </Layout>
+                </Router>
             </div>
         );
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Layout } from 'antd';
 
 import Navbar from '../components/Navbar';
-import CollectionList from '../components/CollectionList';
+// import CollectionList from '../components/CollectionList';
 
 const { Header, Content, Footer } = Layout;
 
@@ -22,7 +22,7 @@ export class CustomLayout extends Component {
                     </Header>
                     <Content style={{ padding: '0 50px' }}>
                         <div style={{ background: '#fff', padding: 24, minHeight: 280, marginTop: 24 }}>
-                            <CollectionList />
+                            {this.props.children}
                         </div>
                     </Content>
                     <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
