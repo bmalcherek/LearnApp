@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 
-import Navbar from './containers/Navbar';
+import Layout from './containers/Layout';
 
 
 class App extends Component {
@@ -10,7 +10,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <Navbar />
+                <Layout />
             </div>
         );
     }
