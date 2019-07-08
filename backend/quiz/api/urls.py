@@ -1,11 +1,12 @@
 from django.urls import path
 
-from .views import *
+from . import views
 
 
 urlpatterns = [
-    path('', CollectionListView.as_view()),
-    path('<pk>', CollectionDetailView.as_view()),
-    path('question/', QuestionListView.as_view()),
-    path('question/<pk>', QuestionDetailView.as_view())
+    path('collections/', views.CollectionListView.as_view()),
+    path('collections/<pk>', views.CollectionDetailView.as_view()),
+    path('question/', views.QuestionListView.as_view()),
+    path('question/<pk>', views.QuestionDetailView.as_view()),
+    path('questions/<int:collection_id>/', views.questionListView)
 ]

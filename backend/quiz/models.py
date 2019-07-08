@@ -18,4 +18,4 @@ class Question(models.Model):
     collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.answer
+        return self.question

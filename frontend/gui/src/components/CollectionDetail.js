@@ -13,7 +13,7 @@ export class CollectionDetail extends Component {
     componentDidMount() {
         const collectionID = this.props.match.params.collectionID;
         this.state.loading = true;
-        fetch(`http://localhost:8000/api/${collectionID}`)
+        fetch(`http://localhost:8000/api/collections/${collectionID}`)
             .then(res => res.json())
             .then(res => this.setState({
                 collection: res,

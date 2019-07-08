@@ -11,7 +11,7 @@ export class CollectionList extends Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:8000/api/')
+        fetch('http://localhost:8000/api/collections/')
             .then(response => response.json())
             .then(res => this.setState({
                 data: res,
