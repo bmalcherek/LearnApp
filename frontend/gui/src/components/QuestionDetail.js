@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import { Card } from 'antd';
 
-import QuestionList from './QuestionList';
-
-export class CollectionDetail extends Component {
+export class QuestionDetail extends Component {
     constructor() {
         super();
         this.state = {
             loading: false,
-            collection: {},
+            question: [],
         };
     }
 
     componentDidMount() {
         const collectionID = this.props.match.params.collectionID;
-        this.state.loading = true;
-        fetch(`http://localhost:8000/api/collections/${collectionID}`)
+        const questionID = this.props.match.params.questionID;
+        fetch(`http://localhost:8000/api/questions/${collectionID}/${questionID}`)
             .then(res => res.json())
             .then(res => this.setState({
-                collection: res,
+                question: res[0],
                 loading: false,
             }));
     }
@@ -26,14 +24,12 @@ export class CollectionDetail extends Component {
     render() {
         return (
             <div>
-                <Card title={this.state.collection.name}>
-                    <p>Lorem ipsum</p>
+                <Card title={this.state.question.question}>
+                    <p>{this.state.question.answer}</p>
                 </Card>
-                <br />
-                <QuestionList collectionID={this.props.match.params.collectionID} />
             </div>
         );
     }
 }
 
-export default CollectionDetail;
+export default QuestionDetail;
