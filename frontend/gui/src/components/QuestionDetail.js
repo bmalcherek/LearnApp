@@ -16,7 +16,7 @@ export class QuestionDetail extends Component {
         fetch(`http://localhost:8000/api/questions/${collectionID}/${questionID}`)
             .then(res => res.json())
             .then(res => this.setState({
-                question: res[0],
+                question: res,
                 loading: false,
             }));
     }

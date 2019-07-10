@@ -31,7 +31,7 @@ export class QuestionList extends Component {
                         <List.Item>
                             <List.Item.Meta
                                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                title={<a href={`/${this.props.collectionID}/${item.id}`}>{item.question}</a>}
+                                title={<a href={`/collections/${this.props.collectionID}/${item.id}`}>{item.question}</a>}
                                 // description={item.answer} />
                                 description={this.props.collectionID} />
                         </List.Item>

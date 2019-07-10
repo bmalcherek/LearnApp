@@ -31,7 +31,7 @@ export class CollectionList extends Component {
                         <List.Item>
                             <List.Item.Meta
                                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                title={<a href={`/${item.id}`}>{item.name}</a>}
+                                title={<a href={`/collections/${item.id}`}>{item.name}</a>}
                                 description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
                         </List.Item>
                     )} />

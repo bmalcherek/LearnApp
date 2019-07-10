@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 import QuestionList from './QuestionList';
 
@@ -30,6 +31,11 @@ export class CollectionDetail extends Component {
                     <p>Lorem ipsum</p>
                 </Card>
                 <br />
+                <Link to={`${this.props.match.params.collectionID}/create-new-question`}>
+                    <Button>
+                        Create new question
+                    </Button>
+                </Link>
                 <QuestionList collectionID={this.props.match.params.collectionID} />
             </div>
         );
