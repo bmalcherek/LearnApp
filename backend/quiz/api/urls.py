@@ -4,8 +4,8 @@ from . import views
 
 
 urlpatterns = [
-    path('collections/', views.CollectionListView.as_view()),
-    path('collections/<pk>', views.CollectionDetailView.as_view()),
+    path('collections/', views.collectionListView),
+    path('collections/<int:collection_id>/', views.collectionDetailView),
     path('questions/<int:collection_id>/', views.questionListView),
     path('questions/<int:collection_id>/<int:question_id>', views.questionDetailView),
 ]
