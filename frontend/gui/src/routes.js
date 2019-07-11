@@ -11,10 +11,15 @@ const BaseRouter = () => (
     <div>
         <Switch>
             <Route exact path="/" render={() => (<Redirect to="/collections" />)} />
-            <Route exact path="/editTest" component={QuestionEditForm} />
             <Route exact path="/collections" component={CollectionList} />
             <Route exact path="/collections/create-new-collection" component={CollectionEditForm} />
             <Route exact path="/collections/:collectionID" component={CollectionDetail} />
+            <Route
+                exact
+                path="/collections/:collectionID/edit-collection"
+                component={
+                    props => <CollectionEditForm {...props} edit />
+            } />
             <Route exact path="/collections/:collectionID/create-new-question/" component={QuestionEditForm} />
             <Route exact path="/collections/:collectionID/:questionID/" component={QuestionDetail} />
             <Route

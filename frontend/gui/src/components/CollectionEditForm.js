@@ -31,7 +31,21 @@ export class CollectionEditForm extends Component {
             name,
         };
 
-        axios.post('http://localhost:8000/api/collections/', collection);
+        if (this.props.edit) {
+            axios.put(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}/`, collection);
+        } else {
+            axios.post('http://localhost:8000/api/collections/', collection);
+        }
+    }
+
+    componentDidMount() {
+        if (this.props.edit) {
+            fetch(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}`)
+                .then(res => res.json())
+                .then(res => this.setState({
+                    collectionName: res.name,
+                }));
+        }
     }
 
     render() {
