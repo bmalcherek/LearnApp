@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { List, Avatar } from 'antd';
+import { List, Avatar, Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 export class CollectionList extends Component {
     constructor() {
@@ -21,6 +22,9 @@ export class CollectionList extends Component {
     render() {
         return (
             <div>
+                <Link to="collections/create-new-collection">
+                    <Button>Create new Collection</Button>
+                </Link>
                 <List
                     itemLayout="horizontal"
                     pagination={{

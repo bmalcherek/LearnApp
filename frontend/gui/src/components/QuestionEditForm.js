@@ -76,7 +76,7 @@ export class QuestionEditForm extends Component {
     render() {
         let redirect;
         if (this.state.submitted) {
-            redirect = <Redirect to={`/collections/${this.props.match.params.collectionID}`} />;
+            redirect = <Redirect to={{ pathname: `/collections/${this.props.match.params.collectionID}`, state: 'refresh' }} />;
         } else {
             redirect = null;
         }
