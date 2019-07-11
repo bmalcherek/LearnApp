@@ -13,8 +13,14 @@ const BaseRouter = () => (
             <Route exact path="/editTest" component={QuestionEditForm} />
             <Route exact path="/collections" component={CollectionList} />
             <Route exact path="/collections/:collectionID" component={CollectionDetail} />
-            <Route exact path="/collections/:collectionID/create-new-question" component={QuestionEditForm} />
-            <Route exact path="/collections/:collectionID/:questionID" component={QuestionDetail} />
+            <Route exact path="/collections/:collectionID/create-new-question/" component={QuestionEditForm} />
+            <Route exact path="/collections/:collectionID/:questionID/" component={QuestionDetail} />
+            <Route
+                exact
+                path="/collections/:collectionID/:questionID/edit-question"
+                component={
+                    props => <QuestionEditForm {...props} edit />
+            } />
         </Switch>
     </div>
 );

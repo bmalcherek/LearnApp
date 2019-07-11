@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
+import { Link } from 'react-router-dom';
 
 export class QuestionDetail extends Component {
     constructor() {
@@ -41,7 +42,11 @@ export class QuestionDetail extends Component {
 
         return (
             <div>
+                <Link to={`${this.props.match.params.questionID}/edit-question`}>
+                    <Button>Edit Question</Button>
+                </Link>
                 {card}
+                {/* <img alt="" src="https://images.newschoolers.com/images/17/00/76/80/14/768014.jpg" /> */}
             </div>
         );
     }
