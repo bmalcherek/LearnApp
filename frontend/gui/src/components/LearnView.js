@@ -37,15 +37,21 @@ export class LearnView extends Component {
 
     handleSubmit(event) {
         const name = event.target.name;
+        const originalIndex = this.state.questions[this.state.currentQuestion].originalIndex;
+        const newStats = this.state.questionsStats;
+
         if (name === 'good') {
             console.log('good');
+            newStats[originalIndex].good += 1;
         } else if (name === 'average') {
             console.log('average');
+            newStats[originalIndex].average += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
         } else if (name === 'wrong') {
             console.log('wrong');
+            newStats[originalIndex].wrong += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
@@ -53,7 +59,9 @@ export class LearnView extends Component {
 
         this.setState({
             answered: false,
+            questionsStats: newStats,
         });
+
         this.nextQuestion();
     }
 
