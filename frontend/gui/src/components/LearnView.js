@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Button, Typography } from 'antd';
+import { Button, Typography, Progress } from 'antd';
+
+import LearnSummary from './LearnSummary';
 
 export class LearnView extends Component {
     constructor(props) {
         super(props);
         this.state = {
             questions: [],
+            questionsStats: [],
             currentQuestion: 0,
             loaded: false,
             answered: false,
@@ -13,6 +16,7 @@ export class LearnView extends Component {
         this.showAnswer = this.showAnswer.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.nextQuestion = this.nextQuestion.bind(this);
+        this.addOriginalIndex = this.addOriginalIndex.bind(this);
     }
 
     showAnswer() {
@@ -37,8 +41,14 @@ export class LearnView extends Component {
             console.log('good');
         } else if (name === 'average') {
             console.log('average');
+            this.setState(prevState => ({
+                questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
+            }));
         } else if (name === 'wrong') {
             console.log('wrong');
+            this.setState(prevState => ({
+                questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
+            }));
         }
 
         this.setState({
@@ -47,16 +57,42 @@ export class LearnView extends Component {
         this.nextQuestion();
     }
 
+    addOriginalIndex(res) {
+        const oldQuestions = res;
+        const newQuestions = [];
+        const stats = [];
+        oldQuestions.forEach((element, index) => {
+            // eslint-disable-next-line no-param-reassign
+            element.originalIndex = index;
+            newQuestions.push(element);
+            stats.push({
+                good: 0,
+                average: 0,
+                wrong: 0,
+            });
+        });
+
+        this.setState({
+            questions: newQuestions,
+            questionsStats: stats,
+            loaded: true,
+        });
+    }
+
     componentDidMount() {
         fetch(`http://localhost:8000/api/questions/${this.props.match.params.collectionID}/`)
             .then(res => res.json())
-            .then(res => this.setState({
-                questions: res,
-                loaded: true,
-            }));
+            .then(res => this.addOriginalIndex(res));
+        // fetch(`http://localhost:8000/api/questions/${this.props.match.params.collectionID}/`)
+        //     .then(res => res.json())
+        //     .then(res => this.setState({
+        //         questions: res,
+        //         loaded: true,
+        //     }));
     }
 
     render() {
+        console.log(this.state);
         let question = null;
         let questionText = null;
         if (this.state.loaded) {
@@ -86,9 +122,15 @@ export class LearnView extends Component {
 
         return (
             <div>
+                <Progress
+                    strokeColor={{
+                        '0%': '#108ee9',
+                        '100%': '#87d068' }}
+                    percent={Number(((this.state.currentQuestion / this.state.questions.length) * 100).toFixed(2))} />
                 {questionText}
                 {answer}
                 {buttons}
+                <LearnSummary successPercent={100} />
             </div>
         );
     }
