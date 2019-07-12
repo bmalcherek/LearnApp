@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { List, Avatar, Button } from 'antd';
+import { List, Button } from 'antd';
 import { Link } from 'react-router-dom';
 
 export class CollectionList extends Component {
@@ -34,7 +34,6 @@ export class CollectionList extends Component {
                     renderItem={item => (
                         <List.Item>
                             <List.Item.Meta
-                                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
                                 title={<a href={`/collections/${item.id}`}>{item.name}</a>}
                                 description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
                             <Link to={`collections/${item.id}/learn`}>

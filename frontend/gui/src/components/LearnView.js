@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Typography, Progress } from 'antd';
+import { Button, Typography, Progress, Tooltip } from 'antd';
 
 import LearnSummary from './LearnSummary';
 
@@ -12,6 +12,7 @@ export class LearnView extends Component {
             currentQuestion: 0,
             loaded: false,
             answered: false,
+            finished: false,
         };
         this.showAnswer = this.showAnswer.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,26 +32,26 @@ export class LearnView extends Component {
                 currentQuestion: prevState.currentQuestion + 1,
             }));
         } else {
-            console.log('End of questions');
+            this.setState({
+                finished: true,
+            });
         }
     }
 
     handleSubmit(event) {
+        // TODO: fix finishing learning after wrong or average last answer
         const name = event.target.name;
         const originalIndex = this.state.questions[this.state.currentQuestion].originalIndex;
         const newStats = this.state.questionsStats;
 
         if (name === 'good') {
-            console.log('good');
             newStats[originalIndex].good += 1;
         } else if (name === 'average') {
-            console.log('average');
             newStats[originalIndex].average += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
         } else if (name === 'wrong') {
-            console.log('wrong');
             newStats[originalIndex].wrong += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
@@ -100,25 +101,24 @@ export class LearnView extends Component {
     }
 
     render() {
-        console.log(this.state);
         let question = null;
         let questionText = null;
-        if (this.state.loaded) {
+        if (this.state.loaded && !this.state.finished) {
             question = this.state.questions[this.state.currentQuestion];
             questionText = <Typography.Title level={2}>{question.question}</Typography.Title>;
         }
 
         let answer;
-        if (this.state.answered) {
+        if (this.state.answered && !this.state.finished) {
             answer = <Typography.Title level={3}>{question.answer}</Typography.Title>;
         } else {
             answer = null;
         }
 
-        let buttons;
-        if (!this.state.answered) {
+        let buttons = null;
+        if (!this.state.answered && !this.state.finished) {
             buttons = <Button onClick={this.showAnswer}>Show Answer</Button>;
-        } else {
+        } else if (!this.state.finished) {
             buttons = (
                 <div>
                     <Button type="primary" name="good" onClick={this.handleSubmit}>Good</Button>
@@ -128,17 +128,32 @@ export class LearnView extends Component {
             );
         }
 
+        let learnSummary = null;
+        let finishPct = 0;
+        let title = null;
+        if (this.state.finished) {
+            learnSummary = <LearnSummary successPercent={100} questionsStats={this.state.questionsStats} />;
+            finishPct = 100;
+            title = `${this.state.questions.length} done / ${this.state.questions.length} total`;
+        } else {
+            finishPct = Number(((this.state.currentQuestion / this.state.questions.length) * 100).toFixed(2));
+            title = `${this.state.currentQuestion} done / ${this.state.questions.length} total`;
+        }
+
+
         return (
             <div>
-                <Progress
-                    strokeColor={{
-                        '0%': '#108ee9',
-                        '100%': '#87d068' }}
-                    percent={Number(((this.state.currentQuestion / this.state.questions.length) * 100).toFixed(2))} />
+                <Tooltip title={title}>
+                    <Progress
+                        strokeColor={{
+                            '0%': '#108ee9',
+                            '100%': '#87d068' }}
+                        percent={finishPct} />
+                </Tooltip>
                 {questionText}
                 {answer}
                 {buttons}
-                <LearnSummary successPercent={100} />
+                {learnSummary}
             </div>
         );
     }
