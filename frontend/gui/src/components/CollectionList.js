@@ -37,6 +37,9 @@ export class CollectionList extends Component {
                                 avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
                                 title={<a href={`/collections/${item.id}`}>{item.name}</a>}
                                 description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
+                            <Link to={`collections/${item.id}/learn`}>
+                                <Button>Learn</Button>
+                            </Link>
                         </List.Item>
                     )} />
             </div>

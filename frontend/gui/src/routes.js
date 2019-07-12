@@ -6,6 +6,7 @@ import CollectionDetail from './components/CollectionDetail';
 import QuestionDetail from './components/QuestionDetail';
 import QuestionEditForm from './components/QuestionEditForm';
 import CollectionEditForm from './components/CollectionEditForm';
+import LearnView from './components/LearnView';
 
 const BaseRouter = () => (
     <div>
@@ -14,6 +15,7 @@ const BaseRouter = () => (
             <Route exact path="/collections" component={CollectionList} />
             <Route exact path="/collections/create-new-collection" component={CollectionEditForm} />
             <Route exact path="/collections/:collectionID" component={CollectionDetail} />
+            <Route exact path="/collections/:collectionID/learn" component={LearnView} />
             <Route
                 exact
                 path="/collections/:collectionID/edit-collection"
