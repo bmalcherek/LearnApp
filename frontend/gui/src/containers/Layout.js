@@ -18,7 +18,7 @@ export class CustomLayout extends Component {
             <div>
                 <Layout className="layout">
                     <Header>
-                        <Navbar />
+                        <Navbar isAuth={this.props.isAuthenticated} />
                     </Header>
                     <Content style={{ padding: '0 50px' }}>
                         <div style={{ background: '#fff', padding: 24, minHeight: 280, marginTop: 24 }}>

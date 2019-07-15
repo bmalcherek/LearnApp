@@ -7,11 +7,15 @@ import QuestionDetail from './components/QuestionDetail';
 import QuestionEditForm from './components/QuestionEditForm';
 import CollectionEditForm from './components/CollectionEditForm';
 import LearnView from './components/LearnView';
+import LoginForm from './containers/LoginForm';
+import RegisterForm from './containers/RegisterForm';
 
 const BaseRouter = () => (
     <div>
         <Switch>
             <Route exact path="/" render={() => (<Redirect to="/collections" />)} />
+            <Route exact path="/login" component={LoginForm} />
+            <Route exact path="/register" component={RegisterForm} />
             <Route exact path="/collections" component={CollectionList} />
             <Route exact path="/collections/create-new-collection" component={CollectionEditForm} />
             <Route exact path="/collections/:collectionID" component={CollectionDetail} />
