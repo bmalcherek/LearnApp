@@ -51,7 +51,7 @@ export const authLogin = (username, password) => {
                 // 3600000 = 3600 * 1000 seconds = 1 hour
                 const expirationDate = new Date(currDate.getTime() + 3600000);
                 localStorage.setItem('token', token);
-                localStorage.setItem('exiprationDate', expirationDate);
+                localStorage.setItem('expirationDate', expirationDate);
                 dispatch(authSuccess(token));
                 dispatch(checkAuthTimeout(3600));
             })
@@ -76,7 +76,7 @@ export const authSignup = (username, email, password1, password2) => {
                 // 3600000 = 3600 * 1000 seconds = 1 hour
                 const expirationDate = new Date(currDate.getTime() + 3600000);
                 localStorage.setItem('token', token);
-                localStorage.setItem('exiprationDate', expirationDate);
+                localStorage.setItem('expirationDate', expirationDate);
                 dispatch(authSuccess(token));
                 dispatch(checkAuthTimeout(3600));
             })
