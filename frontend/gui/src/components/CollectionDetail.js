@@ -18,6 +18,11 @@ export class CollectionDetail extends Component {
 
     handleCollectionDelete() {
         const collID = this.props.match.params.collectionID;
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
         axios.delete(`http://localhost:8000/api/collections/${collID}/`);
         this.setState({
             deleted: true,
@@ -27,12 +32,23 @@ export class CollectionDetail extends Component {
     componentDidMount() {
         const collectionID = this.props.match.params.collectionID;
         this.state.loading = true;
-        fetch(`http://localhost:8000/api/collections/${collectionID}`)
-            .then(res => res.json())
+        // fetch(`http://localhost:8000/api/collections/${collectionID}`)
+        //     .then(res => res.json())
+        //     .then(res => this.setState({
+        //         collection: res,
+        //         loading: false,
+        //     }));
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.get(`http://localhost:8000/api/collections/${collectionID}`)
             .then(res => this.setState({
-                collection: res,
+                collection: res.data,
                 loading: false,
-            }));
+            }))
+            .catch((err) => { console.log(err); });
     }
 
     render() {

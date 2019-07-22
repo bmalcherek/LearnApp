@@ -9,7 +9,7 @@ from .serializers import QuestionSerializer, CollectionSerializer
 
 
 @api_view(['GET', 'POST'])
-@permission_classes((permissions.AllowAny, ))
+@permission_classes((permissions.IsAuthenticated, ))
 def collectionListView(request):
     if request.method == 'GET':
         queryset = Collection.objects.all()
@@ -27,7 +27,7 @@ def collectionListView(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes((permissions.AllowAny, ))
+@permission_classes((permissions.IsAuthenticated, ))
 def collectionDetailView(request, collection_id):
     try:
         collection = Collection.objects.get(id=collection_id)
@@ -51,7 +51,7 @@ def collectionDetailView(request, collection_id):
     
 
 @api_view(['GET', 'POST'])
-@permission_classes((permissions.AllowAny, ))
+@permission_classes((permissions.IsAuthenticated, ))
 def questionListView(request, collection_id):
     if request.method == 'GET':
         queryset = Question.objects.filter(collection=collection_id)
@@ -69,7 +69,7 @@ def questionListView(request, collection_id):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-@permission_classes((permissions.AllowAny, ))
+@permission_classes((permissions.IsAuthenticated, ))
 def questionDetailView(request, collection_id, question_id):
     try:
         question = Question.objects.get(collection=collection_id, id=question_id)
@@ -90,3 +90,14 @@ def questionDetailView(request, collection_id, question_id):
     elif request.method == 'DELETE':
         question.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)    
+
+
+@api_view(['GET',])
+@permission_classes((permissions.IsAuthenticated, ))
+def get_user(request):
+    print(request.user)
+    try:
+        print(request.META['HTTP_AUTHORIZATION'])
+    except:
+        return Response({'user': 'not ok'})
+    return Response({'user': 'ok'})

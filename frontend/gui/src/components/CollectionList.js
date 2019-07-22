@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { List, Button } from 'antd';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export class CollectionList extends Component {
     constructor() {
@@ -12,11 +13,25 @@ export class CollectionList extends Component {
     }
 
     componentDidMount() {
-        fetch('http://localhost:8000/api/collections/')
-            .then(response => response.json())
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.get('http://localhost:8000/api/collections/')
+            .then((res) => {
+                console.log(res);
+                return res;
+            })
+            // .then(response => response.json())
             .then(res => this.setState({
-                data: res,
+                data: res.data,
             }));
+        axios.get('http://localhost:8000/api/user/')
+            .then((res) => {
+                console.log(res);
+                return res;
+            });
     }
 
     render() {

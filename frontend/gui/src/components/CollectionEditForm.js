@@ -31,8 +31,15 @@ export class CollectionEditForm extends Component {
             name,
         };
 
+        const collectionID = this.props.match.params.collectionID;
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+
         if (this.props.edit) {
-            axios.put(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}/`, collection);
+            axios.put(`http://localhost:8000/api/collections/${collectionID}/`, collection);
         } else {
             axios.post('http://localhost:8000/api/collections/', collection);
         }
@@ -40,11 +47,22 @@ export class CollectionEditForm extends Component {
 
     componentDidMount() {
         if (this.props.edit) {
-            fetch(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}`)
-                .then(res => res.json())
+            // fetch(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}`)
+            //     .then(res => res.json())
+            //     .then(res => this.setState({
+            //         collectionName: res.name,
+            //     }));
+            const collectionID = this.props.match.params.collectionID;
+            const token = localStorage.getItem('token');
+            axios.defaults.headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+            };
+            axios.get(`http://localhost:8000/api/collections/${collectionID}`)
                 .then(res => this.setState({
-                    collectionName: res.name,
-                }));
+                    collectionName: res.data.name,
+                }))
+                .catch((err) => { console.log(err); });
         }
     }
 

@@ -1,20 +1,31 @@
 import React, { Component } from 'react';
 import { List, Avatar } from 'antd';
+import axios from 'axios';
 
 export class QuestionList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             data: [],
-            collID: props.collectionID,
+            collectionID: props.collectionID,
         };
     }
 
     componentDidMount() {
-        fetch(`http://localhost:8000/api/questions/${this.props.collectionID}`)
-            .then(response => response.json())
+        const collectionID = this.props.collectionID;
+        // fetch(`http://localhost:8000/api/questions/${this.props.collectionID}`)
+        //     .then(response => response.json())
+        //     .then(res => this.setState({
+        //         data: res,
+        //     }));
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.get(`http://localhost:8000/api/questions/${collectionID}`)
             .then(res => this.setState({
-                data: res,
+                data: res.data,
             }));
     }
 

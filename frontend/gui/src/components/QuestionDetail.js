@@ -17,21 +17,38 @@ export class QuestionDetail extends Component {
     handleDelete() {
         const collectionID = this.props.match.params.collectionID;
         const questionID = this.props.match.params.questionID;
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
         axios.delete(`http://localhost:8000/api/questions/${collectionID}/${questionID}`);
         this.setState({
             deleted: true,
         });
+        this.props.history.push('/');
     }
 
     componentDidMount() {
         const collectionID = this.props.match.params.collectionID;
         const questionID = this.props.match.params.questionID;
-        fetch(`http://localhost:8000/api/questions/${collectionID}/${questionID}`)
-            .then(res => res.json())
+        // fetch(`http://localhost:8000/api/questions/${collectionID}/${questionID}`)
+        //     .then(res => res.json())
+        //     .then(res => this.setState({
+        //         question: res,
+        //         loading: false,
+        //     }));
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.get(`http://localhost:8000/api/questions/${collectionID}/${questionID}`)
             .then(res => this.setState({
-                question: res,
+                question: res.data,
                 loading: false,
-            }));
+            }))
+            .catch((err) => { console.log(err); });
     }
 
     render() {
