@@ -11,6 +11,7 @@ from .serializers import QuestionSerializer, CollectionSerializer
 @api_view(['GET', 'POST'])
 @permission_classes((permissions.IsAuthenticated, ))
 def collectionListView(request):
+    # permission_classes = [permissions.AllowAny]
     if request.method == 'GET':
         queryset = Collection.objects.all()
         serializer = CollectionSerializer(queryset, many=True)
@@ -99,5 +100,8 @@ def get_user(request):
     try:
         print(request.META['HTTP_AUTHORIZATION'])
     except:
-        return Response({'user': 'not ok'})
-    return Response({'user': 'ok'})
+        return Response({'user': 'Logged Out'})
+    return Response({
+        'username': request.user.username,
+        'email': request.user.email,
+    })
