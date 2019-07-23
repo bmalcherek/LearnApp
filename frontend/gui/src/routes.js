@@ -17,6 +17,12 @@ const BaseRouter = () => (
             <Route exact path="/login" component={LoginForm} />
             <Route exact path="/register" component={RegisterForm} />
             <Route exact path="/collections" component={CollectionList} />
+            <Route
+                exact
+                path="/my-collections"
+                component={
+                    props => <CollectionList {...props} myCollections />
+            } />
             <Route exact path="/collections/create-new-collection" component={CollectionEditForm} />
             <Route exact path="/collections/:collectionID" component={CollectionDetail} />
             <Route exact path="/collections/:collectionID/learn" component={LearnView} />

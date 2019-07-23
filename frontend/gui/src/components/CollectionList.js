@@ -4,12 +4,20 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 export class CollectionList extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             data: [],
         };
-        // this.onChange = this.onChange.bind(this);
+        this.addCollection = this.addCollection.bind(this);
+    }
+
+    addCollection(event) {
+        const collectionId = event.target.id;
+        const data = {
+            collection: collectionId,
+        };
+        axios.post('http://localhost:8000/api/my-collections/', data);
     }
 
     componentDidMount() {
@@ -18,28 +26,33 @@ export class CollectionList extends Component {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
         };
-        axios.get('http://localhost:8000/api/collections/')
-            .then((res) => {
-                console.log(res);
-                return res;
-            })
-            // .then(response => response.json())
-            .then(res => this.setState({
-                data: res.data,
-            }));
-        axios.get('http://localhost:8000/api/user/')
-            .then((res) => {
-                console.log(res);
-                return res;
-            });
+        if (this.props.myCollections) {
+            axios.get('http://localhost:8000/api/my-collections/')
+                .then(res => this.setState({
+                    data: res.data,
+                }))
+                .catch(err => console.log(err));
+        } else {
+            axios.get('http://localhost:8000/api/collections/')
+                .then(res => this.setState({
+                    data: res.data,
+                }));
+        }
     }
 
     render() {
-        return (
-            <div>
+        let createNewCollectionButton = null;
+        if (!this.props.myCollections) {
+            createNewCollectionButton = (
                 <Link to="collections/create-new-collection">
                     <Button>Create new Collection</Button>
                 </Link>
+            );
+        }
+
+        return (
+            <div>
+                {createNewCollectionButton}
                 <List
                     itemLayout="horizontal"
                     pagination={{
@@ -47,13 +60,15 @@ export class CollectionList extends Component {
                     }}
                     dataSource={this.state.data}
                     renderItem={item => (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={<a href={`/collections/${item.id}`}>{item.name}</a>}
-                                description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
+                        <List.Item actions={[this.props.myCollections ?
                             <Link to={`collections/${item.id}/learn`}>
                                 <Button>Learn</Button>
                             </Link>
+                        :
+                            <Button onClick={this.addCollection} id={item.id}>Add to My Collections</Button>]}>
+                            <List.Item.Meta
+                                title={<a href={`/collections/${item.id}`}>{item.name}</a>}
+                                description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
                         </List.Item>
                     )} />
             </div>

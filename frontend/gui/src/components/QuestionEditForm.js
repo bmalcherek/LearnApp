@@ -22,13 +22,17 @@ export class QuestionEditForm extends Component {
         if (this.props.edit) {
             const collID = this.props.match.params.collectionID;
             const questID = this.props.match.params.questionID;
-            fetch(`http://localhost:8000/api/questions/${collID}/${questID}`)
-                .then(res => res.json())
+            const token = localStorage.getItem('token');
+            axios.defaults.headers = {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+            };
+            axios.get(`http://localhost:8000/api/questions/${collID}/${questID}`)
                 .then(res => this.setState({
-                    question: res.question,
-                    isImage: res.is_image,
-                    imageSrc: res.image_src,
-                    answer: res.answer,
+                    question: res.data.question,
+                    isImage: res.data.is_image,
+                    imageSrc: res.data.image_src,
+                    answer: res.data.answer,
                 }));
         }
     }
@@ -59,6 +63,11 @@ export class QuestionEditForm extends Component {
             collection: collID,
         };
 
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
         if (this.props.edit) {
             const questID = this.props.match.params.questionID;
             axios.put(`http://127.0.0.1:8000/api/questions/${collID}/${questID}`, q);

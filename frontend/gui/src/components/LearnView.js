@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Typography, Progress, Tooltip } from 'antd';
+import axios from 'axios';
 
 import LearnSummary from './LearnSummary';
 
@@ -89,15 +90,13 @@ export class LearnView extends Component {
     }
 
     componentDidMount() {
-        fetch(`http://localhost:8000/api/questions/${this.props.match.params.collectionID}/`)
-            .then(res => res.json())
-            .then(res => this.addOriginalIndex(res));
-        // fetch(`http://localhost:8000/api/questions/${this.props.match.params.collectionID}/`)
-        //     .then(res => res.json())
-        //     .then(res => this.setState({
-        //         questions: res,
-        //         loaded: true,
-        //     }));
+        const token = localStorage.getItem('token');
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.get(`http://localhost:8000/api/questions/${this.props.match.params.collectionID}/`)
+            .then(res => this.addOriginalIndex(res.data));
     }
 
     render() {

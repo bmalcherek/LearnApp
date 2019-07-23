@@ -32,15 +32,16 @@ export class Navbar extends Component {
     }
 
     render() {
-        // let login = (<Menu.Item key="2">
-        //     <Link to="/login">
-        //         Log In
-        //     </Link>
-        // </Menu.Item>);
-
-        // if (this.props.isAuth) {
-        //     login = <Menu.Item key="2" onClick={this.props.logout}>Log Out</Menu.Item>;
-        // }
+        let myCollections = null;
+        if (this.props.isAuth) {
+            myCollections = (
+                <Menu.Item key="2">
+                    <Link to="/my-collections">
+                        My Collections
+                    </Link>
+                </Menu.Item>
+            );
+        }
 
         let dropdown;
         if (this.props.isAuth) {
@@ -72,7 +73,7 @@ export class Navbar extends Component {
                             Collections
                         </Link>
                     </Menu.Item>
-                    {/* {login} */}
+                    {myCollections}
                     {dropdown}
                 </Menu>
             </div>
