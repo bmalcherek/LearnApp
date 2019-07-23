@@ -4,8 +4,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.http import HttpResponse, JsonResponse
 
-from quiz.models import Question, Collection
-from .serializers import QuestionSerializer, CollectionSerializer
+from quiz.models import Question, Collection, MyCollections, MyQuestions
+from .serializers import QuestionSerializer, CollectionSerializer, MyCollectionsSerializer, MyQuestionsSerializer
 
 
 @api_view(['GET', 'POST'])
@@ -105,3 +105,27 @@ def get_user(request):
         'username': request.user.username,
         'email': request.user.email,
     })
+
+
+@api_view(['GET', 'POST'])
+@permission_classes((permissions.IsAuthenticated, ))
+def myCollectionsListView(request):
+    if request.method == 'GET':
+        print(request.user)
+        queryset = MyCollections.objects.filter(user=request.user)
+        serializer = MyCollectionsSerializer(queryset, many=True)
+
+        return JsonResponse(serializer.data, safe=False)
+
+    elif request.method == 'POST':
+        user = request.user
+        data = {
+            'collection': int(request.data['collection']),
+            'user': user.id
+        }
+        serializer = MyCollectionsSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

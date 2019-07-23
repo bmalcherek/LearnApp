@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Collection(models.Model):
@@ -19,3 +20,17 @@ class Question(models.Model):
 
     def __str__(self):
         return self.question
+
+
+class MyCollections(models.Model):
+    collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subscribe_date = models.DateField(auto_now_add=True)
+
+
+class MyQuestions(models.Model):
+    original_collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
+    my_collection = models.ForeignKey(MyCollections, on_delete=models.CASCADE)
+    rep_count = models.IntegerField()
+    last_rep_date = models.DateField()
+    next_rep_date = models.DateField()
