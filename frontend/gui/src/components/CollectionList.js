@@ -49,7 +49,6 @@ export class CollectionList extends Component {
                 </Link>
             );
         }
-        console.log(this.state);
 
         return (
             <div>

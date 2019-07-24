@@ -165,7 +165,7 @@ def myCollectionsDetailView(request, collection_id):
     try:
         collection = MyCollections.objects.get(id=collection_id)
     except:
-        return Response(status=status.HTTP_404_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     
     if request.method == 'GET':
         serializer = MyCollectionsSerializer(collection)
@@ -180,3 +180,35 @@ def myCollectionsDetailView(request, collection_id):
         return Response(status=status.HTTP_204_NO_CONTENT)
     
     return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def MyQuestionsView(request, my_collection_id):
+    try:
+        questions = MyQuestions.objects.filter(my_collection_id=my_collection_id)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = MyQuestionsSerializer(questions, many=True)
+    if len(serializer.data) == 0:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    my_collection = MyCollections.objects.get(id=serializer.data[0]['my_collection'])
+    my_collection_serializer = MyCollectionsSerializer(my_collection)
+    owner_id = my_collection_serializer.data['user']
+
+    if request.user.id != owner_id:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    return_data = list()
+    for question in serializer.data:
+        print(question)
+        og_question = Question.objects.get(id=question['original_question'])
+        og_question = QuestionSerializer(og_question).data
+        og_question_values = { key: og_question[key] for key in ['question', 'is_image', 'image_url', 'answer'] }
+        print(og_question_values)
+        data = {**question, **og_question_values}
+        return_data.append(data)
+
+    return Response(return_data, status=status.HTTP_200_OK)

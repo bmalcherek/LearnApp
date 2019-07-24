@@ -38,8 +38,8 @@ export default function LearnSummary(props) {
                 <Progress percent={wrongPct} status="exception" />
             </Tooltip>
 
-            <Link to="/collections">
-                <Button>Return to collections</Button>
+            <Link to="/my-collections">
+                <Button>Return to My Collections</Button>
             </Link>
         </div>
     );
