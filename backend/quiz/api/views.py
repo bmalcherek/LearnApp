@@ -96,9 +96,10 @@ def questionDetailView(request, collection_id, question_id):
 @api_view(['GET',])
 @permission_classes((permissions.IsAuthenticated, ))
 def get_user(request):
-    print(request.user)
+    # print(request.user)
     try:
-        print(request.META['HTTP_AUTHORIZATION'])
+        pass
+        # print(request.META['HTTP_AUTHORIZATION'])
     except:
         return Response({'user': 'Logged Out'})
     return Response({
@@ -156,3 +157,26 @@ def myCollectionsListView(request):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'DELETE'])
+@permission_classes((permissions.IsAuthenticated, ))
+def myCollectionsDetailView(request, collection_id):
+    try:
+        collection = MyCollections.objects.get(id=collection_id)
+    except:
+        return Response(status=status.HTTP_404_BAD_REQUEST)
+    
+    if request.method == 'GET':
+        serializer = MyCollectionsSerializer(collection)
+        data = serializer.data
+        original_collection = Collection.objects.get(id=data['collection'])
+        og_coll_serializer = CollectionSerializer(original_collection)
+        data['name'] = og_coll_serializer.data['name']
+        return Response(data, status=status.HTTP_200_OK)
+
+    elif request.method == 'DELETE':
+        collection.delete()        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    return Response(status=status.HTTP_404_NOT_FOUND)

@@ -68,7 +68,10 @@ export class CollectionList extends Component {
                         :
                             <Button onClick={this.addCollection} id={item.id}>Add to My Collections</Button>]}>
                             <List.Item.Meta
-                                title={<a href={`/collections/${item.id}`}>{item.name}</a>}
+                                title={this.props.myCollections ?
+                                    <a href={`/my-collections/${item.id}`}>{item.name}</a>
+                                    :
+                                    <a href={`/collections/${item.id}`}>{item.name}</a>}
                                 description="Ant Design, a design language for background applications, is refined by Ant UED Team" />
                         </List.Item>
                     )} />

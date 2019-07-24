@@ -9,5 +9,6 @@ urlpatterns = [
     path('questions/<int:collection_id>/', views.questionListView),
     path('questions/<int:collection_id>/<int:question_id>', views.questionDetailView),
     path('user/', views.get_user),
-    path('my-collections/', views.myCollectionsListView)
+    path('my-collections/', views.myCollectionsListView),
+    path('my-collections/<int:collection_id>/', views.myCollectionsDetailView)
 ]
