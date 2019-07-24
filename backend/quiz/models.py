@@ -31,6 +31,7 @@ class MyCollections(models.Model):
 class MyQuestions(models.Model):
     original_collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
     my_collection = models.ForeignKey(MyCollections, on_delete=models.CASCADE)
-    rep_count = models.IntegerField()
-    last_rep_date = models.DateField()
-    next_rep_date = models.DateField()
+    original_question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    rep_count = models.IntegerField(default=0)
+    last_rep_date = models.DateField(blank=True, null=True)
+    next_rep_date = models.DateField(blank=True, null=True)

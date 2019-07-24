@@ -111,21 +111,48 @@ def get_user(request):
 @permission_classes((permissions.IsAuthenticated, ))
 def myCollectionsListView(request):
     if request.method == 'GET':
-        print(request.user)
         queryset = MyCollections.objects.filter(user=request.user)
         serializer = MyCollectionsSerializer(queryset, many=True)
+        return_data = []
+        for my_collection in serializer.data:
+            data = my_collection
+            collection = Collection.objects.get(id=my_collection['collection'])
+            collection = CollectionSerializer(collection)
+            data['name'] = collection.data['name']
+            return_data.append(data)
 
-        return JsonResponse(serializer.data, safe=False)
+        return Response(return_data)
 
     elif request.method == 'POST':
         user = request.user
-        data = {
-            'collection': int(request.data['collection']),
+        collection = int(request.data['collection'])
+        my_collection_data = {
+            'collection': collection,
             'user': user.id
         }
-        serializer = MyCollectionsSerializer(data=data)
-        if serializer.is_valid():
+        serializer = MyCollectionsSerializer(data=my_collection_data)
+        if serializer.is_valid():                
             serializer.save()
+            print(serializer.data)
+            questions = Question.objects.filter(collection=int(request.data['collection']))
+            question_serializer = QuestionSerializer(questions, many=True)
+            questions = question_serializer.data
+            for question in questions:
+                print(serializer.data)
+                my_question_data = {
+                    'original_collection': collection,
+                    'my_collection': serializer.data['id'],
+                    'original_question': question['id'],
+                    'rep_count': 0,
+                }
+                my_question_serializer = MyQuestionsSerializer(data=my_question_data)
+                if my_question_serializer.is_valid():
+                    my_question_serializer.save()
+                else:
+                    print(my_question_serializer.errors)
+        
+        else:
+            print(serializer.errors)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
