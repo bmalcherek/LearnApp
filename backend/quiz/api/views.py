@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from math import ceil
+
 from rest_framework import status, permissions
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.decorators import api_view, permission_classes
@@ -203,12 +206,63 @@ def MyQuestionsView(request, my_collection_id):
 
     return_data = list()
     for question in serializer.data:
-        print(question)
+        # print(question)
         og_question = Question.objects.get(id=question['original_question'])
         og_question = QuestionSerializer(og_question).data
         og_question_values = { key: og_question[key] for key in ['question', 'is_image', 'image_url', 'answer'] }
-        print(og_question_values)
+        # print(og_question_values)
         data = {**question, **og_question_values}
         return_data.append(data)
 
     return Response(return_data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes((permissions.IsAuthenticated, ))
+def myQuestionsDetailedView(request, my_collection_id, question_id):
+    # print(my_collection_id, question_id)
+    try:
+        question = MyQuestions.objects.get(id=question_id)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':
+        return Response(status=status.HTTP_501_NOT_IMPLEMENTED)
+    
+    elif request.method == 'PUT':
+        old_question = MyQuestionsSerializer(question)
+        # print(old_question.data)
+        data = request.data
+        new_e_factor = old_question.data['e_factor'] + (0.1 - (5 - data['q']) * (0.08 + (5 - data['q']) * 0.02))
+        if new_e_factor < 1.3:
+            new_e_factor = 1.3
+        data['e_factor'] = new_e_factor
+        data['rep_count'] = old_question.data['rep_count']
+
+        if data['q'] >= 4:
+            data['rep_count'] += 1
+            today = datetime.now()
+            data['last_rep_date'] = today.strftime('%Y-%m-%d')
+            if data['rep_count'] == 1:
+                data['next_rep_date'] = (today + timedelta(days=1)).strftime('%Y-%m-%d')
+                data['last_interval'] = 1
+            elif data['rep_count'] == 2:
+                data['next_rep_date'] = (today + timedelta(days=6)).strftime('%Y-%m-%d')
+                data['last_interval'] = 6
+            else:
+                new_interval = ceil(old_question.data['last_interval'] * new_e_factor)
+                data['next_rep_date'] = (today + timedelta(days=new_interval)).strftime('%Y-%m-%d')
+                data['last_interval'] = new_interval
+        else:
+            data['rep_count'] = 0
+            data['last_interval'] = 0
+
+        print(data)
+
+        serializer = MyQuestionsSerializer(question, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        else:
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

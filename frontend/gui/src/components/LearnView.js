@@ -1,8 +1,10 @@
+/* eslint-disable quote-props */
 import React, { Component } from 'react';
 import { Button, Typography, Progress, Tooltip } from 'antd';
 import axios from 'axios';
 
 import LearnSummary from './LearnSummary';
+// import SubMenu from 'antd/lib/menu/SubMenu';
 
 export class LearnView extends Component {
     constructor(props) {
@@ -44,20 +46,53 @@ export class LearnView extends Component {
         const name = event.target.name;
         const originalIndex = this.state.questions[this.state.currentQuestion].originalIndex;
         const newStats = this.state.questionsStats;
+        const collectionID = this.props.match.params.collectionID;
+        const questionIndex = this.state.questions[originalIndex].id;
+        const token = localStorage.getItem('token');
+        let q;
 
-        if (name === 'good') {
+        if (name === 'great') {
+            newStats[originalIndex].great += 1;
+            q = 5;
+        } else if (name === 'good') {
             newStats[originalIndex].good += 1;
+            q = 4;
         } else if (name === 'average') {
             newStats[originalIndex].average += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
+            q = 3;
+        } else if (name === 'bad') {
+            newStats[originalIndex].bad += 1;
+            this.setState(prevState => ({
+                questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
+            }));
+            q = 2;
+        } else if (name === 'veryBad') {
+            newStats[originalIndex].veryBad += 1;
+            this.setState(prevState => ({
+                questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
+            }));
+            q = 1;
         } else if (name === 'wrong') {
             newStats[originalIndex].wrong += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
+            q = 0;
         }
+        newStats[originalIndex].sum += 1;
+
+        const data = {
+            q,
+        };
+
+        axios.defaults.headers = {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${token}`,
+        };
+        axios.put(`http://localhost:8000/api/my-questions/${collectionID}/${questionIndex}/`, data);
 
         this.setState({
             answered: false,
@@ -76,9 +111,13 @@ export class LearnView extends Component {
             element.originalIndex = index;
             newQuestions.push(element);
             stats.push({
+                great: 0,
                 good: 0,
                 average: 0,
+                bad: 0,
+                veryBad: 0,
                 wrong: 0,
+                sum: 0,
             });
         });
 
@@ -91,15 +130,17 @@ export class LearnView extends Component {
 
     componentDidMount() {
         const token = localStorage.getItem('token');
+        const collectionID = this.props.match.params.collectionID;
         axios.defaults.headers = {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
         };
-        axios.get(`http://localhost:8000/api/my-questions/${this.props.match.params.collectionID}/`)
+        axios.get(`http://localhost:8000/api/my-questions/${collectionID}/`)
             .then(res => this.addOriginalIndex(res.data));
     }
 
     render() {
+        // console.log(this.state);
         let question = null;
         let questionText = null;
         if (this.state.loaded && !this.state.finished) {
@@ -120,9 +161,12 @@ export class LearnView extends Component {
         } else if (!this.state.finished) {
             buttons = (
                 <div>
-                    <Button type="primary" name="good" onClick={this.handleSubmit}>Good</Button>
+                    <Button name="great" onClick={this.handleSubmit}>Great</Button>
+                    <Button name="good" onClick={this.handleSubmit}>Good</Button>
                     <Button className="average" name="average" onClick={this.handleSubmit}>Average</Button>
-                    <Button type="danger" name="wrong" onClick={this.handleSubmit}>Wrong!</Button>
+                    <Button name="bad" onClick={this.handleSubmit}>Bad</Button>
+                    <Button name="veryBad" onClick={this.handleSubmit}>Very Bad</Button>
+                    <Button name="wrong" onClick={this.handleSubmit}>Wrong!</Button>
                 </div>
             );
         }

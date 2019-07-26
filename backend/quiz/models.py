@@ -29,9 +29,11 @@ class MyCollections(models.Model):
 
 
 class MyQuestions(models.Model):
-    original_collection = models.ForeignKey(Collection, on_delete=models.CASCADE)
-    my_collection = models.ForeignKey(MyCollections, on_delete=models.CASCADE)
-    original_question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    rep_count = models.IntegerField(default=0)
+    original_collection = models.ForeignKey(Collection, on_delete=models.CASCADE, blank=True)
+    my_collection = models.ForeignKey(MyCollections, on_delete=models.CASCADE, blank=True)
+    original_question = models.ForeignKey(Question, on_delete=models.CASCADE, blank=True)
+    rep_count = models.IntegerField(default=0, blank=True)
     last_rep_date = models.DateField(blank=True, null=True)
     next_rep_date = models.DateField(blank=True, null=True)
+    e_factor = models.FloatField(default=2.5, blank=True)
+    last_interval = models.IntegerField(default=1, blank=True)
