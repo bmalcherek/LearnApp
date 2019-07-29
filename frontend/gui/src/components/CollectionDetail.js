@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Button, Popconfirm } from 'antd';
+import { Card, Button, Popconfirm, Rate } from 'antd';
 import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 
@@ -9,11 +9,20 @@ export class CollectionDetail extends Component {
     constructor() {
         super();
         this.state = {
-            loading: false,
+            loaded: false,
             collection: {},
             deleted: false,
         };
         this.handleCollectionDelete = this.handleCollectionDelete.bind(this);
+        this.changeRating = this.changeRating.bind(this);
+    }
+
+    changeRating(event) {
+        const data = {
+            // eslint-disable-next-line quote-props
+            'rating': event,
+        };
+        axios.put(`http://localhost:8000/api/collections/${this.props.match.params.collectionID}/rate/`, data);
     }
 
     handleCollectionDelete() {
@@ -31,7 +40,6 @@ export class CollectionDetail extends Component {
 
     componentDidMount() {
         const collectionID = this.props.match.params.collectionID;
-        this.state.loading = true;
         // fetch(`http://localhost:8000/api/collections/${collectionID}`)
         //     .then(res => res.json())
         //     .then(res => this.setState({
@@ -46,7 +54,7 @@ export class CollectionDetail extends Component {
         axios.get(`http://localhost:8000/api/collections/${collectionID}`)
             .then(res => this.setState({
                 collection: res.data,
-                loading: false,
+                loaded: true,
             }))
             .catch((err) => { console.log(err); });
     }
@@ -58,6 +66,20 @@ export class CollectionDetail extends Component {
         } else {
             redirect = null;
         }
+
+        let rate = null;
+        if (this.state.loaded) {
+            rate = (
+                <div>
+                    <Rate
+                        defaultValue={this.state.collection.rating}
+                        onChange={this.changeRating}
+                        count={10} />
+                    Votes: {this.state.collection.ratings_count}
+                </div>
+            );
+        }
+        console.log(this.state.collection.rating);
 
         return (
             <div>
@@ -72,7 +94,8 @@ export class CollectionDetail extends Component {
                 </Popconfirm>
 
                 <Card title={this.state.collection.name}>
-                    <p>Lorem ipsum</p>
+                    {rate}
+                    {/* <p>Lorem ipsum</p> */}
                 </Card>
                 <br />
                 <Link to={`${this.props.match.params.collectionID}/create-new-question`}>

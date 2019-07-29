@@ -51,8 +51,32 @@ def collectionDetailView(request, collection_id):
 
     elif request.method == 'DELETE':
         collection.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)  
-    
+        return Response(status=status.HTTP_204_NO_CONTENT) 
+
+
+@api_view(['PUT'])
+@permission_classes((permissions.IsAuthenticated, ))
+def putRatingToCollection(request, collection_id):
+    try:
+        collection = Collection.objects.get(id=collection_id)
+    except Collection.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    collection_data = CollectionSerializer(collection).data
+    data = {}
+    data['ratings_count'] = collection_data['ratings_count'] + 1
+    data['rating'] = (collection_data['rating'] * collection_data['ratings_count'] + request.data['rating']) / data['ratings_count']
+    data['name'] = collection_data['name']
+
+    serializer = CollectionSerializer(collection, data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(status=status.HTTP_202_ACCEPTED)
+
+    else:
+        print(serializer.errors)    
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET', 'POST'])
 @permission_classes((permissions.IsAuthenticated, ))
