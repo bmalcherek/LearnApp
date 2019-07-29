@@ -42,7 +42,6 @@ export class LearnView extends Component {
     }
 
     handleSubmit(event) {
-        // TODO: fix finishing learning after wrong or average last answer
         const name = event.target.name;
         const originalIndex = this.state.questions[this.state.currentQuestion].originalIndex;
         const newStats = this.state.questionsStats;
@@ -50,37 +49,44 @@ export class LearnView extends Component {
         const questionIndex = this.state.questions[originalIndex].id;
         const token = localStorage.getItem('token');
         let q;
+        let wrongAnswer = false;
 
         if (name === 'great') {
             newStats[originalIndex].great += 1;
             q = 5;
+            this.nextQuestion();
         } else if (name === 'good') {
             newStats[originalIndex].good += 1;
             q = 4;
+            this.nextQuestion();
         } else if (name === 'average') {
             newStats[originalIndex].average += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
             q = 3;
+            wrongAnswer = true;
         } else if (name === 'bad') {
             newStats[originalIndex].bad += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
             q = 2;
+            wrongAnswer = true;
         } else if (name === 'veryBad') {
             newStats[originalIndex].veryBad += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
             q = 1;
+            wrongAnswer = true;
         } else if (name === 'wrong') {
             newStats[originalIndex].wrong += 1;
             this.setState(prevState => ({
                 questions: [...prevState.questions, prevState.questions[prevState.currentQuestion]],
             }));
             q = 0;
+            wrongAnswer = true;
         }
         newStats[originalIndex].sum += 1;
 
@@ -99,7 +105,11 @@ export class LearnView extends Component {
             questionsStats: newStats,
         });
 
-        this.nextQuestion();
+        if (wrongAnswer) {
+            this.setState(prevState => ({
+                currentQuestion: prevState.currentQuestion + 1,
+            }));
+        }
     }
 
     addOriginalIndex(res) {
@@ -175,7 +185,9 @@ export class LearnView extends Component {
         let finishPct = 0;
         let title = null;
         if (this.state.finished) {
-            learnSummary = <LearnSummary successPercent={100} questionsStats={this.state.questionsStats} />;
+            learnSummary = (<LearnSummary
+                successPercent={100}
+                questionsStats={this.state.questionsStats} />);
             finishPct = 100;
             title = `${this.state.questions.length} done / ${this.state.questions.length} total`;
         } else {

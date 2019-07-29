@@ -123,6 +123,17 @@ def myCollectionsListView(request):
             collection = Collection.objects.get(id=my_collection['collection'])
             collection = CollectionSerializer(collection)
             data['name'] = collection.data['name']
+
+            to_learn = 0
+            questions = MyQuestions.objects.filter(my_collection=my_collection['id'])
+            today = datetime.now()
+            questions = MyQuestionsSerializer(questions, many=True).data
+            for question in questions:
+                rep_date = datetime.strptime(question['next_rep_date'], '%Y-%m-%d')
+                if rep_date <= today:
+                    to_learn += 1
+            
+            data['to_learn'] = to_learn
             return_data.append(data)
 
         return Response(return_data)

@@ -60,12 +60,16 @@ export class CollectionList extends Component {
                     }}
                     dataSource={this.state.data}
                     renderItem={item => (
-                        <List.Item actions={[this.props.myCollections ?
-                            <Link to={`collections/${item.id}/learn`}>
-                                <Button>Learn</Button>
-                            </Link>
-                        :
-                            <Button onClick={this.addCollection} id={item.id}>Add to My Collections</Button>]}>
+                        <List.Item actions={[
+                            this.props.myCollections ?
+                                <div>
+                                    {item.to_learn} to learn
+                                    <Link to={`collections/${item.id}/learn`} style={{ paddingLeft: '5px' }}>
+                                        <Button>Learn</Button>
+                                    </Link>
+                                </div>
+                            :
+                                <Button onClick={this.addCollection} id={item.id}>Add to My Collections</Button>]}>
                             <List.Item.Meta
                                 title={this.props.myCollections ?
                                     <a href={`/my-collections/${item.id}`}>{item.name}</a>
