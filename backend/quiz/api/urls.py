@@ -12,5 +12,6 @@ urlpatterns = [
     path('my-collections/', views.myCollectionsListView),
     path('my-collections/<int:collection_id>/', views.myCollectionsDetailView),
     path('my-questions/<int:my_collection_id>/', views.MyQuestionsView),
+    path('my-questions/<int:my_collection_id>/get-questions-to-learn/', views.getQuestionsToLearn),
     path('my-questions/<int:my_collection_id>/<int:question_id>/', views.myQuestionsDetailedView),
 ]

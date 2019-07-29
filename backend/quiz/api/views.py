@@ -137,29 +137,29 @@ def myCollectionsListView(request):
         serializer = MyCollectionsSerializer(data=my_collection_data)
         if serializer.is_valid():                
             serializer.save()
-            print(serializer.data)
             questions = Question.objects.filter(collection=int(request.data['collection']))
             question_serializer = QuestionSerializer(questions, many=True)
             questions = question_serializer.data
+            today = datetime.now()
             for question in questions:
-                print(serializer.data)
                 my_question_data = {
                     'original_collection': collection,
                     'my_collection': serializer.data['id'],
                     'original_question': question['id'],
                     'rep_count': 0,
+                    'next_rep_date': today.strftime('%Y-%m-%d')
                 }
                 my_question_serializer = MyQuestionsSerializer(data=my_question_data)
                 if my_question_serializer.is_valid():
                     my_question_serializer.save()
                 else:
                     print(my_question_serializer.errors)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         else:
             print(serializer.errors)
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'DELETE'])
@@ -206,11 +206,9 @@ def MyQuestionsView(request, my_collection_id):
 
     return_data = list()
     for question in serializer.data:
-        # print(question)
         og_question = Question.objects.get(id=question['original_question'])
         og_question = QuestionSerializer(og_question).data
         og_question_values = { key: og_question[key] for key in ['question', 'is_image', 'image_url', 'answer'] }
-        # print(og_question_values)
         data = {**question, **og_question_values}
         return_data.append(data)
 
@@ -266,3 +264,33 @@ def myQuestionsDetailedView(request, my_collection_id, question_id):
         else:
             print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def getQuestionsToLearn(request, my_collection_id):
+    try:
+        questions = MyQuestions.objects.filter(my_collection_id=my_collection_id)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = MyQuestionsSerializer(questions, many=True)
+    data = serializer.data
+    my_collection = MyCollections.objects.get(id=my_collection_id)
+    my_collection = MyCollectionsSerializer(my_collection).data
+
+    if request.user.id != my_collection['user']:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    today = datetime.now()
+    response_data = list()
+    for question in data:
+        rep_date = datetime.strptime(question['next_rep_date'], '%Y-%m-%d')
+        if rep_date <= today:
+            og_question = Question.objects.get(id=question['original_question'])
+            og_question = QuestionSerializer(og_question).data
+            og_question_values = { key: og_question[key] for key in ['question', 'is_image', 'image_url', 'answer'] }
+            question_data = {**question, **og_question_values}
+            response_data.append(question_data)
+
+    return Response(response_data, status=status.HTTP_200_OK)

@@ -135,7 +135,7 @@ export class LearnView extends Component {
             'Content-Type': 'application/json',
             Authorization: `Token ${token}`,
         };
-        axios.get(`http://localhost:8000/api/my-questions/${collectionID}/`)
+        axios.get(`http://localhost:8000/api/my-questions/${collectionID}/get-questions-to-learn/`)
             .then(res => this.addOriginalIndex(res.data));
     }
 
